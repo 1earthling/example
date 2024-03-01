@@ -1,20 +1,31 @@
 import boto3
+from datetime import datetime, timedelta
 
-def list_db_identifiers():
-    # Create an RDS client
-    rds_client = boto3.client('rds')
-    
-    # Initialize a list to hold DB identifiers
-    db_identifiers = []
-    
-    # Paginate through all DB instances if there are more than the service limit
-    paginator = rds_client.get_paginator('describe_db_instances')
-    for page in paginator.paginate():
-        for db_instance in page['DBInstances']:
-            db_identifiers.append(db_instance['DBInstanceIdentifier'])
-    
-    return db_identifiers
+# Initialize a CloudWatch client
+cloudwatch_client = boto3.client('cloudwatch')
 
-# Get the list of DB identifiers and print them
-db_identifiers = list_db_identifiers()
-print("RDS DB Instance Identifiers:", db_identifiers)
+# Specify your RDS Global Database identifier and the region it's located in
+db_identifier = 'your-global-db-identifier'
+
+# Define the time period for the metrics you want to retrieve
+end_time = datetime.utcnow()
+start_time = end_time - timedelta(hours=1)  # Adjust based on your needs
+
+# Retrieve metrics from CloudWatch
+response = cloudwatch_client.get_metric_statistics(
+    Namespace='AWS/RDS',
+    MetricName='GlobalDBReplicationLag',
+    Dimensions=[
+        {
+            'Name': 'DBClusterIdentifier',
+            'Value': db_identifier
+        },
+    ],
+    StartTime=start_time,
+    EndTime=end_time,
+    Period=300,  # 5 minutes in seconds
+    Statistics=['Average', 'Maximum'],  # You can specify other statistics as needed
+)
+
+# Print the response
+print(response)
