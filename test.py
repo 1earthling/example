@@ -1,17 +1,18 @@
 import boto3
 
-def list_writer_db_instances():
+def list_writer_instances_aurora():
     rds_client = boto3.client('rds')
-    db_instances = rds_client.describe_db_instances()
     writer_instances = []
 
-    for db_instance in db_instances['DBInstances']:
-        # Exclude read replicas by checking if the ReadReplicaSourceDBInstanceIdentifier attribute exists
-        if 'ReadReplicaSourceDBInstanceIdentifier' not in db_instance:
-            writer_instances.append(db_instance['DBInstanceIdentifier'])
+    # Describe all DB clusters
+    clusters = rds_client.describe_db_clusters()
+    for cluster in clusters['DBClusters']:
+        for member in cluster['DBClusterMembers']:
+            if member['IsClusterWriter']:
+                writer_instances.append(member['DBInstanceIdentifier'])
 
     return writer_instances
 
-# Get the list of writer DB instances and print them
-writer_db_instances = list_writer_db_instances()
-print("Writer DB Instance Identifiers:", writer_db_instances)
+# For Aurora
+writer_instances_aurora = list_writer_instances_aurora()
+print("Aurora Writer Instances:", writer_instances_aurora)
