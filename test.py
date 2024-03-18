@@ -1,18 +1,21 @@
 import boto3
 
-def list_writer_instances_aurora():
-    rds_client = boto3.client('rds')
-    writer_instances = []
+def list_redis_clusters():
+    # Create an ElastiCache client
+    elasticache = boto3.client('elasticache')
 
-    # Describe all DB clusters
-    clusters = rds_client.describe_db_clusters()
-    for cluster in clusters['DBClusters']:
-        for member in cluster['DBClusterMembers']:
-            if member['IsClusterWriter']:
-                writer_instances.append(member['DBInstanceIdentifier'])
+    # Retrieve all Redis cluster descriptions
+    response = elasticache.describe_cache_clusters(ShowCacheNodeInfo=True)
+    
+    # Check if any clusters exist
+    if response['CacheClusters']:
+        print("Listing Redis clusters:")
+        for cluster in response['CacheClusters']:
+            # Filter for Redis clusters
+            if cluster['Engine'] == 'redis':
+                print(f"Cluster ID: {cluster['CacheClusterId']}, Status: {cluster['CacheClusterStatus']}")
+    else:
+        print("No Redis clusters found.")
 
-    return writer_instances
-
-# For Aurora
-writer_instances_aurora = list_writer_instances_aurora()
-print("Aurora Writer Instances:", writer_instances_aurora)
+if __name__ == "__main__":
+    list_redis_clusters()
