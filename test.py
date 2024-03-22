@@ -1,39 +1,25 @@
-import requests
+import subprocess
 
-# Your previously defined variables
-cert_file_path = 'path/to/your/cert_file.pem'
-cert_password = 'your_password_here'
-ca_cert_file_path = 'path/to/your/ca_cert_file.pem'
-url = 'https://your.request.url.here/'
+# Define your curl command
+cert_file = "path/to/your/cert.pem"
+cert_with_password = "path/to/your/cert.pem:your_password_here"
+ca_cert_file = "path/to/your/ca_cert.pem"
+url = "https://your.request.url.here/"
 
-# Adding custom headers
-headers = {
-    'Content-Type': 'application/json',
-    'Custom-Header': 'YourValue',
-    # Add other headers as needed
-}
+curl_command = [
+    "curl",
+    "--cacert", ca_cert_file,  # CA certificate
+    "--cert", cert_with_password,  # Client certificate with password
+    url  # URL to fetch
+]
 
-# Data to be sent in a POST request (as an example)
-data = {
-    'key': 'value',
-    # Add other key-value pairs as needed
-}
+# Execute the curl command
+result = subprocess.run(curl_command, capture_output=True, text=True)
 
-# For JSON payload, you can use `json` instead of `data`:
-# json_payload = {'key': 'value'}
-
-# To disable proxies
-proxies = {
-    "http": None,
-    "https": None,
-}
-
-# For a POST request, include `data` or `json` and `headers`
-response = requests.post(url, verify=ca_cert_file_path, cert=(cert_file_path, cert_password),
-                         headers=headers, data=data, proxies=proxies)
-
-# For a GET request with headers and no proxy, simply remove the `data` or `json` parameter
-# response = requests.get(url, verify=ca_cert_file_path, cert=(cert_file_path, cert_password),
-#                         headers=headers, proxies=proxies)
-
-print(response.text)
+# Check if the command was executed successfully
+if result.returncode == 0:
+    # Success, print the output
+    print(result.stdout)
+else:
+    # An error occurred, print the error
+    print("Error:", result.stderr)
