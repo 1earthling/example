@@ -1,25 +1,39 @@
-import subprocess
+import json
 
-# Define your curl command
-cert_file = "path/to/your/cert.pem"
-cert_with_password = "path/to/your/cert.pem:your_password_here"
-ca_cert_file = "path/to/your/ca_cert.pem"
-url = "https://your.request.url.here/"
+def read_json(file_path):
+    """Read JSON data from a file."""
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
-curl_command = [
-    "curl",
-    "--cacert", ca_cert_file,  # CA certificate
-    "--cert", cert_with_password,  # Client certificate with password
-    url  # URL to fetch
-]
+def extract_keys(data, prefix=''):
+    """Recursively extract keys from nested JSON."""
+    keys = set()
+    if isinstance(data, dict):
+        for k, v in data.items():
+            new_prefix = f"{prefix}.{k}" if prefix else k
+            keys.add(new_prefix)
+            keys.update(extract_keys(v, new_prefix))
+    elif isinstance(data, list):
+        for item in data:
+            keys.update(extract_keys(item, prefix))
+    return keys
 
-# Execute the curl command
-result = subprocess.run(curl_command, capture_output=True, text=True)
+def compare_keys(file1, file2):
+    """Compare keys from two JSON files and print the differences."""
+    # Read and extract keys from both JSON files
+    data1 = read_json(file1)
+    data2 = read_json(file2)
+    
+    keys1 = extract_keys(data1)
+    keys2 = extract_keys(data2)
+    
+    # Determine keys that are unique to each file
+    unique_to_file1 = keys1 - keys2
+    unique_to_file2 = keys2 - keys1
+    
+    # Output the results
+    print("Keys unique to file1:", unique_to_file1)
+    print("Keys unique to file2:", unique_to_file2)
 
-# Check if the command was executed successfully
-if result.returncode == 0:
-    # Success, print the output
-    print(result.stdout)
-else:
-    # An error occurred, print the error
-    print("Error:", result.stderr)
+# Example usage:
+compare_keys('path/to/your/first_file.json', 'path/to/your/second_file.json')
