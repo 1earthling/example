@@ -1,4 +1,9 @@
 import boto3
+import warnings
+import urllib3
+
+# Suppress SSL warnings
+warnings.filterwarnings("ignore", category=urllib3.exceptions.InsecureRequestWarning)
 
 def list_s3_buckets_and_files():
     # Disable SSL verification
