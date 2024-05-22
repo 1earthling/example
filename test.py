@@ -1,8 +1,18 @@
 import boto3
+from botocore.config import Config
 
 def list_s3_buckets_and_files():
-    s3_client = boto3.client('s3')
-    s3_resource = boto3.resource('s3')
+    # Disable SSL verification
+    boto3_config = Config(
+        retries={
+            'max_attempts': 10,
+            'mode': 'standard'
+        },
+        verify=False
+    )
+
+    s3_client = boto3.client('s3', config=boto3_config)
+    s3_resource = boto3.resource('s3', config=boto3_config)
 
     buckets = s3_client.list_buckets()
 
