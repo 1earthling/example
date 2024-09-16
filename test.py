@@ -1,6 +1,6 @@
 osascript -e '
 tell application "Notes"
-    set theFolder to "~/Desktop/ExportedNotes/"
+    set theFolder to (POSIX path of (path to desktop folder)) & "ExportedNotes/"
     set theAccounts to every account
     repeat with theAccount in theAccounts
         set theFolders to folders of theAccount
