@@ -1,20 +1,15 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f4f4f4'}, 'flowchart': {'defaultRenderer': 'dagre'}}}%%
 graph TD
     A["CEO"]
-    B["CTO"] --> C1["Lead Dev"]
-    B --> C2["QA Manager"]
-    A --> B
-    A --> D["CFO"]
-    A --> E["COO"]
     
-    E --> E1["HR Manager"]
-    E --> E2["Marketing Manager"]
-
-    subgraph Development Team
-        C1
-        C2
+    subgraph Team1
+        direction TB
+        B1["Lead Dev"]
+        B2["QA Manager"]
+        B3["DevOps Manager"]
+        B4["Security Lead"]
+        B5["UX Designer"]
+        B6["Data Engineer"]
     end
 
-    subgraph Operations Team
-        E1
-        E2
-    end
+    A --> Team1
