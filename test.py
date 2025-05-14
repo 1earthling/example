@@ -1,15 +1,21 @@
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f4f4f4'}, 'flowchart': {'defaultRenderer': 'dagre'}}}%%
-graph TD
-    A["CEO"]
-    
-    subgraph Team1
-        direction TB
-        B1["Lead Dev"]
-        B2["QA Manager"]
-        B3["DevOps Manager"]
-        B4["Security Lead"]
-        B5["UX Designer"]
-        B6["Data Engineer"]
-    end
+# render_markdown.py
 
-    A --> Team1
+from rich.console import Console
+from rich.markdown import Markdown
+
+def render_markdown(file_path):
+    console = Console()
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        markdown = Markdown(content)
+        console.print(markdown)
+    except FileNotFoundError:
+        console.print(f"[bold red]Error:[/bold red] The file '{file_path}' was not found.")
+    except Exception as e:
+        console.print(f"[bold red]An error occurred:[/bold red] {e}")
+
+# Example usage:
+if __name__ == "__main__":
+    # Replace 'example.md' with the path to your markdown file
+    render_markdown('example.md')
