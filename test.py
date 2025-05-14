@@ -1,15 +1,14 @@
-# render_markdown.py
-
 from rich.console import Console
 from rich.markdown import Markdown
 
 def render_markdown(file_path):
-    console = Console()
+    # Force left-justification by using a wide console and soft wrapping
+    console = Console(width=120, soft_wrap=True)
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
         markdown = Markdown(content)
-        console.print(markdown)
+        console.print(markdown, justify="left")
     except FileNotFoundError:
         console.print(f"[bold red]Error:[/bold red] The file '{file_path}' was not found.")
     except Exception as e:
@@ -17,5 +16,4 @@ def render_markdown(file_path):
 
 # Example usage:
 if __name__ == "__main__":
-    # Replace 'example.md' with the path to your markdown file
     render_markdown('example.md')
