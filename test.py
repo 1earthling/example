@@ -23,3 +23,7 @@ sudo dpkg -i ca-certificates_20230311_all.deb
 
 # Update the certs
 sudo update-ca-certificates
+
+
+wget https://packages.microsoft.com/debian/12/prod/pool/main/m/msodbcsql18/msodbcsql18_18.3.2.1-1_amd64.deb
+sudo ACCEPT_EULA=Y dpkg -i msodbcsql18_18.3.2.1-1_amd64.deb
