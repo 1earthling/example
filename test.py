@@ -10,3 +10,16 @@ echo "deb [arch=amd64] https://packages.microsoft.com/debian/12/prod bookworm ma
 # Update and install the ODBC driver
 sudo apt update
 sudo ACCEPT_EULA=Y apt install msodbcsql18
+
+
+# Create a working directory
+mkdir -p ~/debian-certs-fix && cd ~/debian-certs-fix
+
+# Download the .deb file for ca-certificates from a Debian mirror using HTTP (not HTTPS)
+wget http://ftp.us.debian.org/debian/pool/main/c/ca-certificates/ca-certificates_20230311_all.deb
+
+# Install it manually
+sudo dpkg -i ca-certificates_20230311_all.deb
+
+# Update the certs
+sudo update-ca-certificates
