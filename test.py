@@ -27,3 +27,20 @@ sudo update-ca-certificates
 
 wget https://packages.microsoft.com/debian/12/prod/pool/main/m/msodbcsql18/msodbcsql18_18.3.2.1-1_amd64.deb
 sudo ACCEPT_EULA=Y dpkg -i msodbcsql18_18.3.2.1-1_amd64.deb
+
+
+import pyodbc
+
+conn = pyodbc.connect(
+    "DRIVER={ODBC Driver 18 for SQL Server};"
+    "SERVER=your_sql_server_host;"
+    "DATABASE=your_db;"
+    "UID=your_username;"
+    "PWD=your_password;"
+    "Encrypt=yes;"
+    "TrustServerCertificate=yes;"
+)
+cursor = conn.cursor()
+cursor.execute("SELECT @@VERSION")
+row = cursor.fetchone()
+print(row)
